@@ -172,6 +172,37 @@ def main() -> None:
         use_web_search = st.checkbox("Web検索による情報補足", value=False)
         st.caption(f"APIキー状態: {'設定済み' if api_key else '未設定'}")
 
+    # ==========================================
+    # 【追加】来週の時間割（1〜6限）入力エリア
+    # ==========================================
+        st.markdown('<p class="section-label">来週の時間割設定（1〜6限）</p>', unsafe_allow_html=True)
+        with st.expander("時間割を個別に設定する（30コマ）", expanded=False):
+            st.caption("月曜〜金曜の1〜6限の教科名を入力してください。")
+            days = ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日"]
+            periods = [f"{i}限" for i in range(1, 7)]
+        
+            # セッションステートで時間割データを保持
+        if "timetable_input" not in st.session_state:
+            st.session_state.timetable_input = {day: ["" for _ in range(6)] for day in days}
+        
+        current_timetable = {}
+        for day in days:
+            st.markdown(f"**{day}**")
+            cols = st.columns(6)
+            day_subjects = []
+            for i, period in enumerate(periods):
+                with cols[i]:
+                    val = st.text_input(
+                        f"{day}{period}",
+                        value=st.session_state.timetable_input[day][i],
+                        key=f"tt_{day}_{i}",
+                        label_visibility="collapsed",
+                        placeholder=period
+                    )
+                    day_subjects.append(val)
+            current_timetable[day] = day_subjects
+            st.session_state.timetable_input[day] = day_subjects　　　　
+
     st.markdown('<p class="console-header">お便り作成コンソール</p>', unsafe_allow_html=True)
     st.markdown('<p class="console-subheader">Template Engine Architecture (docxtpl + JSON)</p>', unsafe_allow_html=True)
 
