@@ -215,14 +215,15 @@ def main() -> None:
     if st.session_state.doc_data:
         data = st.session_state.doc_data
         
-        # 画面上でのプレビュー表示
+       # 画面上でのプレビュー表示
         with st.expander("生成されたデータ（プレビュー）", expanded=True):
             st.markdown(f"**タイトル:** {data.title}")
+            st.markdown(f"**サブタイトル:** {data.subtitle}")
+            st.markdown(f"**発行日:** {data.date_str}")
             st.markdown(f"**挨拶:** {data.greeting}")
             st.markdown(f"**本文:** {data.body}")
-            st.markdown(f"**日時:** {data.event_date} {data.event_time}")
-            st.markdown(f"**場所:** {data.event_place}")
-            st.markdown(f"**持ち物:** {data.event_items}")
+            st.markdown(f"**来週の予定:** {data.schedule_text}")
+            st.markdown(f"**保護者向けメモ:** {data.parent_note}")
             st.markdown(f"**結び:** {data.closing}")
         
         if data.urls:
