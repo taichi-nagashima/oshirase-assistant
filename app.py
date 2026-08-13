@@ -158,7 +158,7 @@ def main() -> None:
     apply_enterprise_styles()
     api_key = get_api_key()
 
-    with st.sidebar:
+with st.sidebar:
         st.markdown("### コントロールパネル")
         audience = st.selectbox("対象読者", options=list(AUDIENCE_OPTIONS.keys()), format_func=lambda k: AUDIENCE_OPTIONS[k])
         doc_type = st.selectbox("文書の種類", options=list(DOCUMENT_TYPE_OPTIONS.keys()), format_func=lambda k: DOCUMENT_TYPE_OPTIONS[k])
@@ -169,8 +169,8 @@ def main() -> None:
         selected_template = st.selectbox("デザインテンプレート", options=templates)
         
         st.divider()
-                use_web_search = st.checkbox("Web検索による情報補足", value=False)
-                st.caption(f"APIキー状態: {'設定済み' if api_key else '未設定'}")
+        use_web_search = st.checkbox("Web検索による情報補足", value=False)
+        st.caption(f"APIキー状態: {'設定済み' if api_key else '未設定'}")
 
             # ==========================================
             # 【追加】来週の時間割（1〜6限）入力エリア
