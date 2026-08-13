@@ -53,23 +53,29 @@ ensure_default_template()
 # =============================================================================
 # Data Schema (Structured Output for Gemini)
 # =============================================================================
-class NewsletterData(BaseModel):
-    # Pydantic v2の構成設定: エラーを防ぐために追加
-    class Config:
-        extra = 'ignore' 
 
+class DailySchedule(BaseModel):
+    # 曜日ごとの1〜6限の授業
+    periods: list[str] = Field(description="1限から6限までの授業名リスト")
+
+class NewsletterData(BaseModel):
     title: str = Field(description="お便りのタイトル")
-    subtitle: str = Field(description="ヘッダー用サブタイトル（例: 3年3組 学級通信 第○号）")
-    date_str: str = Field(description="発行日（例: 令和8年○月○日(金)発行）")
+    subtitle: str = Field(description="ヘッダー用サブタイトル")
+    date_str: str = Field(description="発行日")
     greeting: str = Field(description="導入の温かい挨拶文")
     body: str = Field(description="本文（600~800文字、子供の具体的な様子を含む）")
     parent_note: str = Field(description="★保護者の皆様へ★の注意書き欄の文章")
     closing: str = Field(description="結びの言葉")
     
-    # 辞書型を明示的に定義
-    timetable: dict = Field(description="月曜から金曜までの1〜6限の授業予定（key:曜日, value:授業名のリスト）")
+    # 辞書ではなく、曜日ごとに固定のクラスを指定する
+    mon: DailySchedule = Field(description="月曜日の時間割")
+    tue: DailySchedule = Field(description="火曜日の時間割")
+    wed: DailySchedule = Field(description="水曜日の時間割")
+    thu: DailySchedule = Field(description="木曜日の時間割")
+    fri: DailySchedule = Field(description="金曜日の時間割")
     
     urls: list[str] = Field(description="参考にしたURLのリスト")
+    
 # =============================================================================
 # UI Styles
 # =============================================================================
@@ -228,6 +234,9 @@ def main() -> None:
                     - その他: 保護者への連絡事項(parent_note)も含めること。
                     - 時間割(timetable): ユーザーが指定した以下の時間割データをそのままJSONの`timetable`に含めて出力すること。
                     
+                    # プロンプト内の該当箇所
+                    - 時間割(timetable): 以下の入力データに基づき、mon, tue, wed, thu, fri の各フィールドを適切に埋めること。
+                    
                     【入力された時間割データ】
                     {st.session_state.timetable_input}
 
@@ -261,10 +270,12 @@ def main() -> None:
             st.markdown(f"**本文:** {data.body}")
             st.markdown(f"**来週の予定:** {data.schedule_text}")
             st.markdown(f"**保護者向けメモ:** {data.parent_note}")
-# 【追加】プレビューに時間割を表示
+# 修正版プレビュー
             st.markdown("**【来週の時間割】**")
-            for day, subs in data.timetable.items():
-                st.markdown(f"- **{day}**: " + ", ".join([s if s else "(なし)" for s in subs]))
+            for day_key in ['mon', 'tue', 'wed', 'thu', 'fri']:
+                day_name = {'mon':'月曜', 'tue':'火曜', 'wed':'水曜', 'thu':'木曜', 'fri':'金曜'}[day_key]
+                subjects = getattr(data, day_key).periods
+                st.markdown(f"- **{day_name}**: " + ", ".join(subjects))
                 
             st.markdown(f"**結び:** {data.closing}")
         
