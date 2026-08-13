@@ -185,7 +185,7 @@ def main() -> None:
         st.caption(f"APIキー状態: {'設定済み' if api_key else '未設定'}")
 
     st.markdown('<p class="console-header">お便り作成コンソール</p>', unsafe_allow_html=True)
-    st.markdown('<p class="console-subheader">Template Engine Architecture (docxtpl + JSON)</p>', unsafe_allow_html=True)
+    st.markdown('<p class="console-subheader">お便り作成アシスタント ver1.0.0</p>', unsafe_allow_html=True)
 
     if not api_key:
         st.warning("警告: APIキーが設定されていません。")
