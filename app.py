@@ -57,12 +57,15 @@ class NewsletterData(BaseModel):
     title: str = Field(description="お便りのタイトル")
     subtitle: str = Field(description="ヘッダー用サブタイトル（例: 3年3組 学級通信 第○号）")
     date_str: str = Field(description="発行日（例: 令和8年○月○日(金)発行）")
-    greeting: str = Field(description="導入。季節感があり、温かみのある短い文章。")
-    body: str = Field(description="具体例。子供の具体的な様子や言葉を入れ、一文を短く、前向きな構成で600~800文字程度。")
-    # 来週の予定（テーブル用）
-    schedule_text: str = Field(description="来週の予定（曜日ごとの授業や行事のまとめ）")
+    greeting: str = Field(description="導入の温かい挨拶文")
+    body: str = Field(description="本文（600~800文字、子供の具体的な様子を含む）")
     parent_note: str = Field(description="★保護者の皆様へ★の注意書き欄の文章")
     closing: str = Field(description="結びの言葉")
+    
+    # 追加：時間割データ（曜日ごとの授業内容の辞書、またはリスト）
+    # 例: {"月曜": ["国語", "数学", "理科", "社会", "英語", "体育"], ...}
+    timetable: dict = Field(description="月曜から金曜までの1〜6限の授業予定の辞書")
+    
     urls: list[str] = Field(description="参考にしたURLのリスト")
 
 # =============================================================================
