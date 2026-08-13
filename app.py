@@ -218,7 +218,7 @@ def main() -> None:
         else:
             with st.status("データを生成しています...", expanded=True) as status:
                 try:
-                    prompt = f"""
+                   prompt = f"""
                     あなたはベテラン教員です。以下の制約と構成を厳守して学級通信のデータを作成してください。
 
                     【絶対守るべき制約】
@@ -226,7 +226,11 @@ def main() -> None:
                     - 文体: ですます調。温かく前向きなトーン。
                     - 文構造: 読者が読みやすいよう、一文一文をできるだけ短く分割すること。
                     - 構成: 導入(greeting) → 具体：子供の具体的な様子や言葉を入れる(body) → 結び(closing)
-                    - その他: 保護者への連絡事項(parent_note)や、来週の予定(schedule_text)も含めること。
+                    - その他: 保護者への連絡事項(parent_note)も含めること。
+                    - 時間割(timetable): ユーザーが指定した以下の時間割データをそのままJSONの`timetable`に含めて出力すること。
+                    
+                    【入力された時間割データ】
+                    {st.session_state.timetable_input}
 
                     読者: {AUDIENCE_OPTIONS[audience]} / 種類: {DOCUMENT_TYPE_OPTIONS[doc_type]} / 分量: {LENGTH_OPTIONS[length]}
                     
