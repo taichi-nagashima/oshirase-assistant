@@ -262,6 +262,11 @@ def main() -> None:
             st.markdown(f"**本文:** {data.body}")
             st.markdown(f"**来週の予定:** {data.schedule_text}")
             st.markdown(f"**保護者向けメモ:** {data.parent_note}")
+# 【追加】プレビューに時間割を表示
+            st.markdown("**【来週の時間割】**")
+            for day, subs in data.timetable.items():
+                st.markdown(f"- **{day}**: " + ", ".join([s if s else "(なし)" for s in subs]))
+                
             st.markdown(f"**結び:** {data.closing}")
         
         if data.urls:
