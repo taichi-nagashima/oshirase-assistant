@@ -54,6 +54,10 @@ ensure_default_template()
 # Data Schema (Structured Output for Gemini)
 # =============================================================================
 class NewsletterData(BaseModel):
+    # Pydantic v2の構成設定: エラーを防ぐために追加
+    class Config:
+        extra = 'ignore' 
+
     title: str = Field(description="お便りのタイトル")
     subtitle: str = Field(description="ヘッダー用サブタイトル（例: 3年3組 学級通信 第○号）")
     date_str: str = Field(description="発行日（例: 令和8年○月○日(金)発行）")
@@ -62,12 +66,10 @@ class NewsletterData(BaseModel):
     parent_note: str = Field(description="★保護者の皆様へ★の注意書き欄の文章")
     closing: str = Field(description="結びの言葉")
     
-    # 追加：時間割データ（曜日ごとの授業内容の辞書、またはリスト）
-    # 例: {"月曜": ["国語", "数学", "理科", "社会", "英語", "体育"], ...}
-    timetable: dict = Field(description="月曜から金曜までの1〜6限の授業予定の辞書")
+    # 辞書型を明示的に定義
+    timetable: dict = Field(description="月曜から金曜までの1〜6限の授業予定（key:曜日, value:授業名のリスト）")
     
     urls: list[str] = Field(description="参考にしたURLのリスト")
-
 # =============================================================================
 # UI Styles
 # =============================================================================
