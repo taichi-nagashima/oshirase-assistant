@@ -146,66 +146,65 @@ def apply_apple_styles() -> None:
         }
 
         .stApp {
-            position: relative;
-            overflow-x: hidden;
             background: #fbfbfd;
             color: var(--ink);
         }
 
-        /* Quiet ambient background: almost white, with slowly drifting light. */
-        .stApp::before,
-        .stApp::after {
-            content: "";
+        /* Quiet ambient background. The animation is isolated in a normal div
+           so it does not depend on Streamlit's internal app-root DOM structure. */
+        .ambient-bg {
             position: fixed;
+            inset: 0;
             z-index: 0;
             pointer-events: none;
-            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
             filter: blur(72px);
-            opacity: .44;
-            transform: translate3d(0, 0, 0);
+            opacity: .34;
+            will-change: transform;
         }
 
-        .stApp::before {
-            width: 32rem;
-            height: 32rem;
-            top: -18rem;
-            left: 12%;
-            background: radial-gradient(
-                circle,
-                rgba(187, 215, 255, .36) 0%,
-                rgba(221, 232, 255, .16) 42%,
-                rgba(255, 255, 255, 0) 72%
-            );
-            animation: ambientDriftA 18s ease-in-out infinite alternate;
+        .ambient-orb.one {
+            width: 31rem;
+            height: 31rem;
+            left: 8%;
+            top: -17rem;
+            background: radial-gradient(circle,
+                rgba(187, 215, 255, .55) 0%,
+                rgba(221, 232, 255, .22) 45%,
+                rgba(255,255,255,0) 72%);
+            animation: ambientFloatOne 18s ease-in-out infinite alternate;
         }
 
-        .stApp::after {
-            width: 28rem;
-            height: 28rem;
-            right: 3%;
-            bottom: -16rem;
-            background: radial-gradient(
-                circle,
-                rgba(226, 215, 255, .28) 0%,
-                rgba(239, 232, 255, .12) 45%,
-                rgba(255, 255, 255, 0) 72%
-            );
-            animation: ambientDriftB 22s ease-in-out infinite alternate;
+        .ambient-orb.two {
+            width: 27rem;
+            height: 27rem;
+            right: 1%;
+            bottom: -15rem;
+            background: radial-gradient(circle,
+                rgba(226, 215, 255, .42) 0%,
+                rgba(239, 232, 255, .18) 45%,
+                rgba(255,255,255,0) 72%);
+            animation: ambientFloatTwo 22s ease-in-out infinite alternate;
         }
 
-        @keyframes ambientDriftA {
-            0%   { transform: translate3d(-4vw, 0, 0) scale(1); }
-            100% { transform: translate3d(7vw, 5vh, 0) scale(1.14); }
+        @keyframes ambientFloatOne {
+            from { transform: translate3d(-2vw, 0, 0) scale(1); }
+            to   { transform: translate3d(7vw, 5vh, 0) scale(1.12); }
         }
 
-        @keyframes ambientDriftB {
-            0%   { transform: translate3d(5vw, -3vh, 0) scale(1.02); }
-            100% { transform: translate3d(-6vw, -7vh, 0) scale(1.16); }
+        @keyframes ambientFloatTwo {
+            from { transform: translate3d(4vw, -2vh, 0) scale(1.02); }
+            to   { transform: translate3d(-5vw, -6vh, 0) scale(1.14); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .stApp::before,
-            .stApp::after {
+            .ambient-orb.one,
+            .ambient-orb.two {
                 animation: none;
             }
         }
@@ -519,6 +518,16 @@ def timetable_text(timetable: dict[str, list[str]]) -> str:
 
 def main() -> None:
     apply_apple_styles()
+
+    st.markdown(
+        '''
+        <div class="ambient-bg" aria-hidden="true">
+            <div class="ambient-orb one"></div>
+            <div class="ambient-orb two"></div>
+        </div>
+        ''',
+        unsafe_allow_html=True,
+    )
 
     if "doc_data" not in st.session_state:
         st.session_state.doc_data = None
