@@ -158,7 +158,7 @@ def main() -> None:
     apply_enterprise_styles()
     api_key = get_api_key()
 
-with st.sidebar:
+    with st.sidebar:
         st.markdown("### コントロールパネル")
         audience = st.selectbox("対象読者", options=list(AUDIENCE_OPTIONS.keys()), format_func=lambda k: AUDIENCE_OPTIONS[k])
         doc_type = st.selectbox("文書の種類", options=list(DOCUMENT_TYPE_OPTIONS.keys()), format_func=lambda k: DOCUMENT_TYPE_OPTIONS[k])
@@ -172,37 +172,6 @@ with st.sidebar:
         use_web_search = st.checkbox("Web検索による情報補足", value=False)
         st.caption(f"APIキー状態: {'設定済み' if api_key else '未設定'}")
 
-            # ==========================================
-            # 【追加】来週の時間割（1〜6限）入力エリア
-            # ==========================================
-            st.markdown('<p class="section-label">来週の時間割設定（1〜6限）</p>', unsafe_allow_html=True)
-            with st.expander("時間割を個別に設定する（30コマ）", expanded=False):
-                st.caption("月曜〜金曜の1〜6限の教科名を入力してください。")
-                days = ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日"]
-                periods = [f"{i}限" for i in range(1, 7)]
-        
-                # セッションステートで時間割データを保持
-                if "timetable_input" not in st.session_state:
-                    st.session_state.timetable_input = {day: ["" for _ in range(6)] for day in days}
-        
-                current_timetable = {}
-                for day in days:
-                    st.markdown(f"**{day}**")
-                    cols = st.columns(6)
-                    day_subjects = []
-                    for i, period in enumerate(periods):
-                        with cols[i]:
-                            val = st.text_input(
-                                f"{day}{period}",
-                                value=st.session_state.timetable_input[day][i],
-                                key=f"tt_{day}_{i}",
-                                label_visibility="collapsed",
-                                placeholder=period
-                            )
-                            day_subjects.append(val)
-                    current_timetable[day] = day_subjects
-                    st.session_state.timetable_input[day] = day_subjects　　　
-
     st.markdown('<p class="console-header">お便り作成コンソール</p>', unsafe_allow_html=True)
     st.markdown('<p class="console-subheader">Template Engine Architecture (docxtpl + JSON)</p>', unsafe_allow_html=True)
 
@@ -212,13 +181,41 @@ with st.sidebar:
     st.markdown('<p class="section-label">入力エリア</p>', unsafe_allow_html=True)
     draft_notes = st.text_area("伝えたい内容", height=150, label_visibility="collapsed", placeholder="記載したい内容を入力してください...")
 
+    # 来週の時間割（1〜6限）入力エリア
+    st.markdown('<p class="section-label">来週の時間割設定（1〜6限）</p>', unsafe_allow_html=True)
+    with st.expander("時間割を個別に設定する（30コマ）", expanded=False):
+        st.caption("月曜〜金曜の1〜6限の教科名を入力してください。")
+        days = ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日"]
+        periods = [f"{i}限" for i in range(1, 7)]
+        
+        if "timetable_input" not in st.session_state:
+            st.session_state.timetable_input = {day: ["" for _ in range(6)] for day in days}
+        
+        current_timetable = {}
+        for day in days:
+            st.markdown(f"**{day}**")
+            cols = st.columns(6)
+            day_subjects = []
+            for i, period in enumerate(periods):
+                with cols[i]:
+                    val = st.text_input(
+                        f"{day}{period}",
+                        value=st.session_state.timetable_input[day][i],
+                        key=f"tt_{day}_{i}",
+                        label_visibility="collapsed",
+                        placeholder=period
+                    )
+                    day_subjects.append(val)
+            current_timetable[day] = day_subjects
+            st.session_state.timetable_input[day] = day_subjects
+
     if st.button("お便りを生成する", type="primary", disabled=not api_key):
         if not draft_notes.strip():
             st.error("エラー: 伝えたい内容を入力してください。")
         else:
             with st.status("データを生成しています...", expanded=True) as status:
                 try:
-                   prompt = f"""
+                    prompt = f"""
                     あなたはベテラン教員です。以下の制約と構成を厳守して学級通信のデータを作成してください。
 
                     【絶対守るべき制約】
