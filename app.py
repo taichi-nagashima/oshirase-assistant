@@ -146,10 +146,73 @@ def apply_apple_styles() -> None:
         }
 
         .stApp {
-            background:
-                radial-gradient(circle at 50% -10%, rgba(0,113,227,.07), transparent 32rem),
-                #f5f5f7;
+            position: relative;
+            overflow-x: hidden;
+            background: #fbfbfd;
             color: var(--ink);
+        }
+
+        /* Quiet ambient background: almost white, with slowly drifting light. */
+        .stApp::before,
+        .stApp::after {
+            content: "";
+            position: fixed;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 999px;
+            filter: blur(72px);
+            opacity: .44;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .stApp::before {
+            width: 32rem;
+            height: 32rem;
+            top: -18rem;
+            left: 12%;
+            background: radial-gradient(
+                circle,
+                rgba(187, 215, 255, .36) 0%,
+                rgba(221, 232, 255, .16) 42%,
+                rgba(255, 255, 255, 0) 72%
+            );
+            animation: ambientDriftA 18s ease-in-out infinite alternate;
+        }
+
+        .stApp::after {
+            width: 28rem;
+            height: 28rem;
+            right: 3%;
+            bottom: -16rem;
+            background: radial-gradient(
+                circle,
+                rgba(226, 215, 255, .28) 0%,
+                rgba(239, 232, 255, .12) 45%,
+                rgba(255, 255, 255, 0) 72%
+            );
+            animation: ambientDriftB 22s ease-in-out infinite alternate;
+        }
+
+        @keyframes ambientDriftA {
+            0%   { transform: translate3d(-4vw, 0, 0) scale(1); }
+            100% { transform: translate3d(7vw, 5vh, 0) scale(1.14); }
+        }
+
+        @keyframes ambientDriftB {
+            0%   { transform: translate3d(5vw, -3vh, 0) scale(1.02); }
+            100% { transform: translate3d(-6vw, -7vh, 0) scale(1.16); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .stApp::before,
+            .stApp::after {
+                animation: none;
+            }
+        }
+
+        section.main > div {
+            position: relative;
+            z-index: 1;
         }
 
         .block-container {
@@ -169,21 +232,26 @@ def apply_apple_styles() -> None:
 
         .hero {
             text-align: center;
-            padding: 1.4rem 0 2.3rem;
+            padding: 2rem 0 2.8rem;
         }
 
         .eyebrow {
             display: inline-flex;
             align-items: center;
             gap: .4rem;
-            padding: .42rem .75rem;
-            border: 1px solid rgba(0,113,227,.13);
+            padding: .46rem .78rem;
+            border: 1px solid rgba(0,113,227,.11);
             border-radius: 999px;
-            background: rgba(255,255,255,.68);
+            background: rgba(255,255,255,.72);
             color: var(--accent);
             font-size: .76rem;
             font-weight: 650;
             letter-spacing: .03em;
+            box-shadow:
+                0 8px 24px rgba(0,0,0,.035),
+                inset 0 1px 0 rgba(255,255,255,.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .hero h1 {
@@ -197,9 +265,9 @@ def apply_apple_styles() -> None:
         .hero p {
             margin: 0 auto;
             max-width: 650px;
-            color: var(--muted);
-            font-size: 1.02rem;
-            line-height: 1.7;
+            color: #6e6e73;
+            font-size: 1.04rem;
+            line-height: 1.72;
         }
 
         .section-title {
@@ -216,11 +284,15 @@ def apply_apple_styles() -> None:
         }
 
         .card {
-            background: rgba(255,255,255,.88);
-            border: 1px solid rgba(0,0,0,.055);
-            border-radius: 24px;
+            background: rgba(255,255,255,.72);
+            border: 1px solid rgba(255,255,255,.92);
+            border-radius: 26px;
             padding: 1.35rem;
-            box-shadow: 0 10px 35px rgba(0,0,0,.045);
+            box-shadow:
+                0 18px 45px rgba(15, 23, 42, .045),
+                inset 0 1px 0 rgba(255,255,255,.95);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
         }
 
         .mini-label {
@@ -251,11 +323,13 @@ def apply_apple_styles() -> None:
         }
 
         .preview-paper {
-            background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 2rem;
-            box-shadow: 0 12px 30px rgba(0,0,0,.05);
+            background: rgba(255,255,255,.94);
+            border: 1px solid rgba(0,0,0,.055);
+            border-radius: 22px;
+            padding: 2.15rem;
+            box-shadow:
+                0 28px 60px rgba(15, 23, 42, .065),
+                0 2px 8px rgba(15, 23, 42, .03);
         }
 
         .preview-title {
@@ -287,9 +361,10 @@ def apply_apple_styles() -> None:
         div[data-baseweb="select"] > div,
         .stTextInput > div > div,
         .stTextArea > div > textarea {
-            border-radius: 14px;
-            border-color: #d9d9dc;
-            background: rgba(255,255,255,.9);
+            border-radius: 15px;
+            border-color: rgba(0,0,0,.08);
+            background: rgba(255,255,255,.76);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
         }
 
         .stTextArea textarea {
@@ -319,9 +394,11 @@ def apply_apple_styles() -> None:
         }
 
         div[data-testid="stExpander"] {
-            border: 1px solid rgba(0,0,0,.07);
-            border-radius: 18px;
-            background: rgba(255,255,255,.65);
+            border: 1px solid rgba(0,0,0,.055);
+            border-radius: 20px;
+            background: rgba(255,255,255,.58);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
         }
 
         .timetable-note {
@@ -332,8 +409,8 @@ def apply_apple_styles() -> None:
 
         .divider {
             height: 1px;
-            background: var(--line);
-            margin: 2.2rem 0;
+            background: rgba(0,0,0,.065);
+            margin: 2.5rem 0;
         }
 
         @media (max-width: 768px) {
