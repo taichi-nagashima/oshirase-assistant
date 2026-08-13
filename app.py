@@ -63,16 +63,20 @@ class NewsletterData(BaseModel):
     subtitle: str = Field(description="ヘッダー用サブタイトル")
     date_str: str = Field(description="発行日")
     greeting: str = Field(description="導入の温かい挨拶文")
-    body: str = Field(description="本文（600~800文字、子供の具体的な様子を含む）")
-    parent_note: str = Field(description="★保護者の皆様へ★の注意書き欄の文章")
+    body: str = Field(description="本文（600~800文字）")
+    parent_note: str = Field(description="★保護者の皆様へ★の注意書き欄")
     closing: str = Field(description="結びの言葉")
     
-    # 辞書ではなく、曜日ごとに固定のクラスを指定する
-    mon: DailySchedule = Field(description="月曜日の時間割")
-    tue: DailySchedule = Field(description="火曜日の時間割")
-    wed: DailySchedule = Field(description="水曜日の時間割")
-    thu: DailySchedule = Field(description="木曜日の時間割")
-    fri: DailySchedule = Field(description="金曜日の時間割")
+    # 月曜1〜6限
+    mon_1: str; mon_2: str; mon_3: str; mon_4: str; mon_5: str; mon_6: str
+    # 火曜1〜6限
+    tue_1: str; tue_2: str; tue_3: str; tue_4: str; tue_5: str; tue_6: str
+    # 水曜1〜6限
+    wed_1: str; wed_2: str; wed_3: str; wed_4: str; wed_5: str; wed_6: str
+    # 木曜1〜6限
+    thu_1: str; thu_2: str; thu_3: str; thu_4: str; thu_5: str; thu_6: str
+    # 金曜1〜6限
+    fri_1: str; fri_2: str; fri_3: str; fri_4: str; fri_5: str; fri_6: str
     
     urls: list[str] = Field(description="参考にしたURLのリスト")
     
