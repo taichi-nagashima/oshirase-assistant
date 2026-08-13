@@ -55,12 +55,13 @@ ensure_default_template()
 # =============================================================================
 class NewsletterData(BaseModel):
     title: str = Field(description="お便りのタイトル")
-    greeting: str = Field(description="季節の挨拶や導入文")
-    body: str = Field(description="お便りのメインとなる本文")
-    event_date: str = Field(description="行事の日程（ない場合は「特になし」）")
-    event_time: str = Field(description="行事の時間（ない場合は「特になし」）")
-    event_place: str = Field(description="行事の場所（ない場合は「特になし」）")
-    event_items: str = Field(description="行事の持ち物（ない場合は「特になし」）")
+    subtitle: str = Field(description="ヘッダー用サブタイトル（例: 3年3組 学級通信 第○号）")
+    date_str: str = Field(description="発行日（例: 令和8年○月○日(金)発行）")
+    greeting: str = Field(description="導入。季節感があり、温かみのある短い文章。")
+    body: str = Field(description="具体例。子供の具体的な様子や言葉を入れ、一文を短く、前向きな構成で600~800文字程度。")
+    # 来週の予定（テーブル用）
+    schedule_text: str = Field(description="来週の予定（曜日ごとの授業や行事のまとめ）")
+    parent_note: str = Field(description="★保護者の皆様へ★の注意書き欄の文章")
     closing: str = Field(description="結びの言葉")
     urls: list[str] = Field(description="参考にしたURLのリスト")
 
@@ -184,10 +185,18 @@ def main() -> None:
             with st.status("データを生成しています...", expanded=True) as status:
                 try:
                     prompt = f"""
-                    あなたはベテラン教員です。以下のメモからお便りの構成要素を作成してください。
+                    あなたはベテラン教員です。以下の制約と構成を厳守して学級通信のデータを作成してください。
+
+                    【絶対守るべき制約】
+                    - 全体文字数: 本文（body）は必ず600文字〜800文字に収めること。
+                    - 文体: ですます調。温かく前向きなトーン。
+                    - 文構造: 読者が読みやすいよう、一文一文をできるだけ短く分割すること。
+                    - 構成: 導入(greeting) → 具体：子供の具体的な様子や言葉を入れる(body) → 結び(closing)
+                    - その他: 保護者への連絡事項(parent_note)や、来週の予定(schedule_text)も含めること。
+
                     読者: {AUDIENCE_OPTIONS[audience]} / 種類: {DOCUMENT_TYPE_OPTIONS[doc_type]} / 分量: {LENGTH_OPTIONS[length]}
                     
-                    【メモ】
+                    【教員のメモ】
                     {draft_notes}
                     """
                     
