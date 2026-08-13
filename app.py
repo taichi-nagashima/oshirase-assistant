@@ -268,15 +268,16 @@ def main() -> None:
             st.markdown(f"**発行日:** {data.date_str}")
             st.markdown(f"**挨拶:** {data.greeting}")
             st.markdown(f"**本文:** {data.body}")
-            st.markdown(f"**来週の予定:** {data.schedule_text}")
             st.markdown(f"**保護者向けメモ:** {data.parent_note}")
-# 修正版プレビュー
+            
+            # 来週の時間割プレビュー表示
             st.markdown("**【来週の時間割】**")
-            for day_key in ['mon', 'tue', 'wed', 'thu', 'fri']:
-                day_name = {'mon':'月曜', 'tue':'火曜', 'wed':'水曜', 'thu':'木曜', 'fri':'金曜'}[day_key]
-                subjects = getattr(data, day_key).periods
-                st.markdown(f"- **{day_name}**: " + ", ".join(subjects))
-                
+            day_labels = {'mon': '月曜日', 'tue': '火曜日', 'wed': '水曜日', 'thu': '木曜日', 'fri': '金曜日'}
+            for day_key, day_name in day_labels.items():
+                if hasattr(data, day_key):
+                    periods_list = getattr(data, day_key).periods
+                    st.markdown(f"- **{day_name}**: " + ", ".join([p if p else "(なし)" for p in periods_list]))
+            
             st.markdown(f"**結び:** {data.closing}")
         
         if data.urls:
